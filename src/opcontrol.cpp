@@ -92,6 +92,11 @@ void runOpcontrol() {
         // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
         // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
+        // Toggle Claw
+        if (master.get_digital_new_press(DIGITAL_R1)) {
+          bot::clawPiston.set(!bot::clawPiston.get());
+        }
+
         
 
         pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME

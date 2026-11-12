@@ -40,7 +40,7 @@ extern std::vector<Sensor> allSensor;
 namespace bot {
 extern pros::Motor liftMotorLeft;
 extern pros::Motor liftMotorRight;
-extern pros::Rotation liftAngleSensor;
+extern pros::Rotation liftRotationSensor;
 extern LiftConfig liftConfig;
 extern Lift liftController;
 
@@ -51,4 +51,11 @@ extern ez::Piston clawPiston;
 extern ClawConfig clawConfig;
 extern Claw clawController;
 void runClawAutoTask(void*);
+
+// Points to the selected string literal ("Red" or "Blue"), or nullptr when
+// there is no valid selection stored on the SD card.
+extern const char* allianceColor;
+void loadAllianceColor();
+void setAllianceColor(const char* color);
+void runAllianceSelectionTask(void*);
 } // namespace bot

@@ -23,6 +23,8 @@ ez::Drive chassis(
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  bot::loadAllianceColor();
+
   // Print our branding over your terminal :D
   ez::ez_template_print();
   pros::delay(500);  // Stop the user from doing anything while legacy ports configure
@@ -68,7 +70,7 @@ void initialize() {
   ez::health::device_add(&bot::liftMotorLeft, "Lift Left");
   ez::health::device_add(&bot::liftMotorRight, "Lift Right");
   ez::health::device_add(&bot::intakeMotor, "Intake");
-  ez::health::device_add(&bot::liftAngleSensor, "Lift Angle");
+  ez::health::device_add(&bot::liftRotationSensor, "Lift Rotation");
   ez::health::device_add(&frontDistance, "Front Reset Distance");
   ez::health::device_add(&backDistance, "Back Reset Distance");
   ez::health::device_add(&leftDistance, "Left Reset Distance");
@@ -81,6 +83,11 @@ void initialize() {
       bot::runLiftControlTask,
       nullptr,
       "Lift Control"
+  );
+  static pros::Task allianceSelectionTask(
+      bot::runAllianceSelectionTask,
+      nullptr,
+      "Alliance Select"
   );
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -180,6 +187,13 @@ void ez_screen_task() {
 
         } else if (ez::as::page_blank_is_on(1))
           ez_motor_temperatures();
+        else if (ez::as::page_blank_is_on(2)) {
+          const char* color = bot::allianceColor;
+          ez::screen_print(
+              color == nullptr ? "Alliance: None" : std::string("Alliance: ") + color,
+              1
+          );
+        }
 
         // . . .
         // Add your own blank pages here!
@@ -213,6 +227,5 @@ pros::Task ezScreenTask(ez_screen_task);
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  
   runOpcontrol();
 }
