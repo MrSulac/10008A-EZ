@@ -1,5 +1,6 @@
 #include "main.h"
 #include "bot/config.hpp"
+#include "EZ-Template/health.hpp"
 #include "autons/auton-config.hpp"
 #include "autons/test-autons.hpp"
 #include "autons/auton-config.hpp"
@@ -61,6 +62,21 @@ void initialize() {
   // Initialize chassis and auton selector
   chassis.initialize();
   ez::as::initialize();
+
+  // Drive motors and IMU are checked by preflight through chassis
+  // Register the other robot devices to preflight
+  ez::health::device_add(&bot::liftMotorLeft, "Lift Left");
+  ez::health::device_add(&bot::liftMotorRight, "Lift Right");
+  ez::health::device_add(&bot::intakeMotor, "Intake");
+  ez::health::device_add(&bot::liftAngleSensor, "Lift Angle");
+  ez::health::device_add(&frontDistance, "Front Reset Distance");
+  ez::health::device_add(&backDistance, "Back Reset Distance");
+  ez::health::device_add(&leftDistance, "Left Reset Distance");
+  ez::health::device_add(&rightDistance, "Right Reset Distance");
+  ez::health::device_add(&bot::clawDistanceSensor, "Claw Distance");
+  ez::health::preflight_register(chassis);
+  ez::health::preflight(chassis, master);
+
   static pros::Task liftControlTask(
       bot::runLiftControlTask,
       nullptr,

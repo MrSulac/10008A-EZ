@@ -3,6 +3,7 @@
 #include "api.h"
 #include "bot/claw.hpp"
 #include "bot/lift.hpp"
+#include "bot/intake.hpp"
 #include "util.hpp"
 #include <vector>
 
