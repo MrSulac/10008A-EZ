@@ -1,0 +1,55 @@
+#pragma once
+
+#include "api.h"
+#include "bot/claw.hpp"
+#include "bot/lift.hpp"
+#include "util.hpp"
+#include <vector>
+
+struct Sensor {
+    pros::Distance& distanceSensor;
+
+    // Position of the sensor relative to the robot's center
+    // Positive Y is Forward, Positive X is Right
+    Vec2 offset;
+    // Orientation of the sensor relative to the robot's forward direction (in degrees)
+    double angle;
+
+    Vec2 S;
+    Vec2 U;
+
+    double measurement;
+    double predictedDistance;
+
+    int wall;
+};
+
+extern pros::Distance frontDistance;
+extern pros::Distance backDistance;
+extern pros::Distance leftDistance;
+extern pros::Distance rightDistance;
+
+extern Sensor frontSensor;
+extern Sensor backSensor;
+extern Sensor leftSensor;
+extern Sensor rightSensor;
+
+extern std::vector<Sensor> allSensor;
+
+// Sample lift hardware configuration. Change ports and tuning values to match
+// the robot before using the controller.
+namespace bot {
+extern pros::Motor liftMotorLeft;
+extern pros::Motor liftMotorRight;
+extern pros::Rotation liftAngleSensor;
+extern LiftConfig liftConfig;
+extern Lift liftController;
+
+void runLiftControlTask(void*);
+
+extern pros::Distance clawDistanceSensor;
+extern ez::Piston clawPiston;
+extern ClawConfig clawConfig;
+extern Claw clawController;
+void runClawAutoTask(void*);
+} // namespace bot
