@@ -7,11 +7,14 @@
 
 namespace bot {
 
+// Configuration for the claw's closing behavior
 struct ClawConfig {
-    // PROS distance sensor readings are in millimeters.
+    // Distance in mm at which the claw will close automatically
     int closeDistanceMm = 80;
+    // Delay in ms after the distance is met before the claw closes
     int closeDelayMs = 100;
-    int loopPeriodMs = 20;
+    // Delay in ms between sensor checks in the automatic loop
+    int loopPeriodMs = 30;
 };
 
 class Claw {

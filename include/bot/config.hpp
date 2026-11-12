@@ -36,8 +36,6 @@ extern Sensor rightSensor;
 
 extern std::vector<Sensor> allSensor;
 
-// Sample lift hardware configuration. Change ports and tuning values to match
-// the robot before using the controller.
 namespace bot {
 extern pros::Motor liftMotorLeft;
 extern pros::Motor liftMotorRight;

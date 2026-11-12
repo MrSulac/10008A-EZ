@@ -9,6 +9,7 @@
 
 namespace bot {
 
+// Configuration for the lift's movement behavior
 struct LiftConfig {
     // Feedback gains. kP is mV per height unit; kD is mV/(arm degree/second).
     double kP = 0.0;
@@ -17,21 +18,22 @@ struct LiftConfig {
     // Gravity feedforward magnitude in mV at the arm's horizontal position.
     double kG = 0.0;
 
-    // Lift geometry. Keep these in the same height units (for example inches).
+    // Lift geometry. Keep these in the same height units as the configured arm length units.
     double startingOffsetHeight = 0.0;
     double armLength = 0.0;
-    // Stop before the arms reach vertical / the lift's near-toggle position.
+    // The maximum angle the lift can reach, in degrees
+    // Prevents lift from trying to go beyond its physical limits
     double maxArmAngleDegrees = 85.0;
 
-    // Converts rotation sensor degrees to approximate lift arm degrees.
+    // Converts rotation sensor degrees to approximate lift arm degrees
+    // Should be 1 to 1 if the sensor is on the lift arm axle
     double armAngleOffsetDegrees = 0.0;
     double armDegreesPerSensorDegree = 1.0;
 
     int loopPeriodMs = 10;
 };
 
-// Assumes the arm angle is measured from horizontal. The result uses the same
-// distance units as startingOffsetHeight and armLength.
+// Arm is angle is measured from the horizontal
 double degreesToHeight(
     double armAngleDegrees,
     double startingOffsetHeight,
@@ -46,7 +48,6 @@ public:
         LiftConfig config = {}
     );
 
-    // Target height is in the same units as LiftConfig::armLength.
     void setTargetHeight(double targetHeight);
     double getTargetHeight() const;
     double getMaxHeight() const;

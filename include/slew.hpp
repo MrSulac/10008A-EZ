@@ -5,7 +5,7 @@
 namespace motor_slew {
 
 // Move currentVoltage toward targetVoltage by at most maxStep millivolts.
-// PROS motor voltage commands are limited to -12000..12000 mV.
+// PROS motor voltage commands are limited to -12000 to 12000 mV.
 int stepVoltage(int currentVoltage, int targetVoltage, int maxStep);
 
 // Slew and send a voltage command to a PROS Motor or MotorGroup.

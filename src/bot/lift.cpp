@@ -5,7 +5,7 @@
 namespace bot {
 namespace {
 
-constexpr double PI = 3.14159265358979323846;
+constexpr double PI = 3.14159;
 constexpr double MAX_MOTOR_VOLTAGE_MV = 12000.0;
 
 double clampVoltage(double voltage) {
