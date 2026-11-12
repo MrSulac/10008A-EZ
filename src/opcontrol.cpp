@@ -3,6 +3,10 @@
 
 #include <cmath>
 
+void test_robot_functions() {
+  // Add testing functions here, eg driving, intaking, lifting, etc.
+}
+
 /**
  * Gives you some extras to run in your opcontrol:
  * - run your autonomous routine in opcontrol by pressing DOWN and B
@@ -41,10 +45,6 @@ void ez_template_extras() {
   else {
     if (chassis.pid_tuner_enabled()) chassis.pid_tuner_disable();
   }
-}
-
-void test_robot_functions() {
-  // Add testing functions here, eg driving, intaking, lifting, etc.
 }
 
 void runOpcontrol() {

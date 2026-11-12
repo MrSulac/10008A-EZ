@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config.hpp"
+#include "bot/config.hpp"
 #include <vector>
 
 enum SegmentType {

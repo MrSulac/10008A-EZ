@@ -1,6 +1,6 @@
 #include "main.h"
-#include "autons/auton-config.hpp"
 #include "bot/config.hpp"
+#include "autons/auton-config.hpp"
 
 ///
 // Drive Example
