@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const D=require('./viewer_core.js');
+let data=D.parse('#name,Ramsete-Profile\nt,x,y,theta\n0,0,0,359\n1,0,10,1\n');
+assert.equal(data.name,'Ramsete-Profile');assert.equal(data.samples.length,2);assert.equal(D.at(data.samples,.5).theta,360);assert.equal(D.at(data.samples,.5).y,5);
+assert.equal(D.length(data.samples),10);assert.equal(D.deviation(data.samples,{x:2,y:5}),2);
+data=D.parse('time_ms,x,y,heading\n0,0,0,0\n1000,0,1,1.5707963267948966\n',{units:'meters',headingUnit:'radians'});assert.ok(Math.abs(data.samples[1].y-39.37007874)<1e-7);assert.equal(data.samples[1].theta,90);
+data=D.parse('t,x,y\n0,0,0\n1,1,0\n');assert.equal(data.samples[0].theta,90);
+data=D.parse('t,x,y,theta\n0,0,0,0\n1,0,2,0\n2,');assert.equal(data.samples.length,2);assert.equal(data.warnings.length,1);
+assert.equal(D.normalize([{t:0,x:0,y:0},{t:0,x:1,y:1}]).length,1);
+assert.throws(()=>D.parse('t,x,y\n0,,1\n'));
+assert.throws(()=>D.parse('t,x,y\n1,0,0\n0,0,0\n'));
+assert.throws(()=>D.parse('{"samples":[{"t":0,"x":"bad","y":1}]}'));
+assert.throws(()=>D.parse('t,x,y\n0,0,0\n',{units:'unknown'}));
+const html=fs.readFileSync(__dirname+'/index.html','utf8');
+const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
+for(const script of scripts)new Function(script);
+assert.ok(!html.includes('__AUTON_CATALOG__')&&!html.includes('__VIEWER_CORE__'));
+if(process.argv[2]){const log=D.parse(fs.readFileSync(process.argv[2],'utf8'));assert.ok(log.samples.length>400);assert.ok(log.samples.at(-1).x>23);}
+console.log('PASS viewer CSV/JSON validation, units, wrapped interpolation, partial log recovery, and generated JavaScript');

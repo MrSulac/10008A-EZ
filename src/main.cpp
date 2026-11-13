@@ -5,6 +5,12 @@
 #include "autons/test-autons.hpp"
 #include "autons/auton-config.hpp"
 #include "opcontrol.hpp"
+#include "ekf.hpp"
+#include "motion_profile.hpp"
+#include "autons/profile-test.hpp"
+#include "autons/stanley-test.hpp"
+#include "autons/ramsete-test.hpp"
+#include "auton_trace.hpp"
 
 // Chassis constructor
 ez::Drive chassis(
@@ -59,6 +65,9 @@ void initialize() {
       {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
       {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", measure_offsets},
       {"Lift Test\n\nRaises and lowers the lift.", lift_test},
+      {"EKF 2D Profile\n\nForward, curve right, finish at (24,24,90)", ekf_profile_test},
+      {"Stanley Profile\n\nSame 2D route using Stanley tracking", stanley_profile_test},
+      {"Ramsete Profile\n\nSame 2D route using tunable Ramsete tracking", ramsete_profile_test},
   });
 
   // Initialize chassis and auton selector
@@ -79,6 +88,9 @@ void initialize() {
   ez::health::preflight_register(chassis);
   ez::health::preflight(chassis, master);
 
+  ekf::start();
+  auton_trace::start();
+
   static pros::Task liftControlTask(
       bot::runLiftControlTask,
       nullptr,
@@ -98,7 +110,8 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-  // . . .
+  motion::cancel();
+  auton_trace::end();
 }
 
 /**
@@ -126,13 +139,22 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
+  ekf::setEnabled(false);                    // Pause before resetting sensor baselines.
   chassis.pid_targets_reset();                // Resets PID targets to 0
   chassis.drive_imu_reset();                  // Reset gyro position to 0
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
+  ekf::reset({0, 0, 0});                     // Starting field pose; also resumes localization.
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
+  auto& selector = ez::as::auton_selector;
+  int selected = selector.auton_page_current;
+  if (selected < 0 || selected >= static_cast<int>(selector.Autons.size())) selected = selector.last_auton_page_current;
+  const char* traceName = selected >= 0 && selected < static_cast<int>(selector.Autons.size())
+      ? selector.Autons[selected].Name.c_str() : "autonomous";
+  auton_trace::begin(traceName);
   ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
+  auton_trace::end();
 }
 
 /**
@@ -193,11 +215,9 @@ void ez_screen_task() {
               color == nullptr ? "Alliance: None" : std::string("Alliance: ") + color,
               1
           );
+        } else if(ez::as::page_blank_is_on(3)){
+        ekf::printEstimate();
         }
-
-        // . . .
-        // Add your own blank pages here!
-        // . . .
       }
     }
 
@@ -227,5 +247,7 @@ pros::Task ezScreenTask(ez_screen_task);
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+  motion::cancel();
+  auton_trace::begin("Driver-Control");
   runOpcontrol();
 }

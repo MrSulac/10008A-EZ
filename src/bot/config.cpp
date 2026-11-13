@@ -5,10 +5,11 @@
 #include <cstdio>
 #include <cstring>
 
-pros::Distance frontDistance(1);
-pros::Distance backDistance(2);
-pros::Distance leftDistance(3);
-pros::Distance rightDistance(4);
+// Dedicated smart ports; 1-6 are drive motors and 12 is the intake.
+pros::Distance frontDistance(13);
+pros::Distance backDistance(14);
+pros::Distance leftDistance(15);
+pros::Distance rightDistance(16);
 
 Sensor frontSensor = {
     frontDistance,

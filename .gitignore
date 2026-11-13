@@ -15,3 +15,8 @@ temp.log
 temp.errors
 *.ini
 .d/
+
+# Local tooling caches
+__pycache__/
+*.py[cod]
+.DS_Store
